@@ -98,7 +98,7 @@ async function add(request,host,path) {
             const buf = await req_clone.arrayBuffer()
             var name = dest.name
             var type = dest.type
-            if (!name || !type) {
+            if (name === "-" || !name || !type) {
                 const is_ascii = await isAsciiFile(buf)
                 if (!name) name = is_ascii ? "paste.txt" : "paste.bin"
                 if (!type) type = is_ascii ? "text/plain" : "application/octet-stream"
