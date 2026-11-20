@@ -110,7 +110,7 @@ async function add(request,host,path) {
                 }
             })
             await KV.delete(path)
-            return create_response(request, `https://${host}/${path}`, {status:201})
+            return create_response(request, `https://${host}/${path}\n`, {status:201})
         }
         else throw e;
     };
