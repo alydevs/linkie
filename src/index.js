@@ -35,7 +35,7 @@ function getHost(request) {
     return request.headers.get("Host")
 }
 
-function create_response(request, body, metadata) {
+function create_response(request, body, metadata, newline=true) {
     try {
         METRICS.writeDataPoint({
             indexes: [
@@ -58,6 +58,8 @@ function create_response(request, body, metadata) {
         }
     }
 
+    if (newline)
+        return new Response(body + "\n", metadata)
     return new Response(body, metadata)
 }
 
@@ -110,7 +112,7 @@ async function add(request,host,path) {
                 }
             })
             await KV.delete(path)
-            return create_response(request, `https://${host}/${path}\n`, {status:201})
+            return create_response(request, `https://${host}/${path}`, {status:201})
         }
         else throw e;
     };
@@ -151,7 +153,7 @@ async function get(request,host,path) {
             headers.set("Content-Disposition", `${md.contentDisposition}; type=${md.contentType}`)
         }
         headers.set("etag", dest_file.httpEtag)
-        return create_response(request, dest_file.body, { headers, } )
+        return create_response(request, dest_file.body, { headers, }, newline=false )
     }
     const dest = await KV.get(path)
     if (dest) return Response.redirect(dest, 302)
